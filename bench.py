@@ -27,13 +27,18 @@ def load_model_and_info(model_path, work_name):
         print(f"\nエラー発生: モデル '{model_path}' の読み込みに失敗しました。詳細: {e}")
         return None, None, None, None, None
 
-    # モデル名からエポック数を抽出
+    # モデル名から情報を抽出
     base_name = os.path.basename(model_path)
-    match = re.search(r'epoch_(\d{3})\.keras$', base_name)
+    pattern = r'^(.+?)_(simple|noble|advanced|massive|infinity)_(full|half|quarter)_epoch_(\d{3})\.keras$'
+    match = re.search(pattern, base_name)
     if match:
-        epoch_str = match.group(1)
+        work_name = match.group(1)
+        model_structure = match.group(2)
+        io_size = match.group(3)
+        epoch_str = match.group(4)
         epochs = int(epoch_str)
     else:
+        print(f"モデル名 '{base_name}' が命名規則に合致しません。")
         epochs = None
 
     parameter_count = model.count_params()
@@ -54,22 +59,6 @@ def load_model_and_info(model_path, work_name):
     formatted_model_name = f"{work_name}_{model_type}_epoch_{str(epochs).zfill(3)}.keras"
 
     return model, model_type, epochs, parameter_count, formatted_model_name
-
-def load_models(models_dir):
-    models = []
-    for filename in os.listdir(models_dir):
-        if filename.endswith('.keras'):
-            # ファイル名から情報を抽出
-            parts = filename.replace('.keras', '').split('_')
-            if len(parts) >= 5 and parts[-2] == 'epoch':
-                work_name = parts[0]
-                model_type = parts[1]
-                size_label = parts[2]
-                epoch = int(parts[-1])
-                model_path = os.path.join(models_dir, filename)
-                model = tf.keras.models.load_model(model_path)
-                models.append((model, filename, model_type, epoch, size_label))
-    return models
 
 def robust_scale(image_array):
     """
