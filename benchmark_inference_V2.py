@@ -69,7 +69,7 @@ def benchmark_images(model, image_dir, label):
     """指定されたディレクトリの画像を使用して推論を実行し、結果を収集する関数"""
     results = []
     for image_name in os.listdir(image_dir):
-        image_path = os.path.join(image_dir, image_name)
+        image_path = os.path.join(image_name)
         image = preprocess_image(image_path)
         accuracy, inference_time, output_image_path = inference(model, image, image_name)
         
