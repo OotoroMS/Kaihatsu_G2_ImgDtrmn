@@ -1,0 +1,10 @@
+{
+  "model_name": "autoencoder_advanced",
+  "work_name": "Sample2024",
+  "crop_ranges": {
+    "x_start": 300,
+    "x_end": 2348,
+    "y_start": 800,
+    "y_end": 1312
+  }
+}
